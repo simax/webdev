@@ -1,2 +1,2 @@
-web: lein with-profile production trampoline run -m webdev.web
+web: java $JVM_OPTS -cp target/webdev.jar clojure.main -m webdev.core
 
