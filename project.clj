@@ -13,6 +13,8 @@
 
   :main webdev.core
 
+  :aot [webdev.core]
+
   :profiles {:dev
                  {:main webdev.core/-dev-main}})
 
