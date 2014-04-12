@@ -20,8 +20,8 @@
   (GET "/goodbye" [] goodbye)
   (not-found "Page not found."))
 
-(defn -main [port]
-  (jetty/run-jetty #'app                             {:port (Integer. port)}))
+(defn -main [& args]
+  (jetty/run-jetty #'app                             {:port (Integer. "5000")}))
 
 (defn -dev-main [port]
   (jetty/run-jetty (wrap-reload #'app)       {:port (Integer. port)}))
