@@ -41,7 +41,7 @@
        :body (str (f a b))
        :headers {}}
       {:status 404
-       :body "Unkown operator."
+       :body "Unkown operator. "
        :headers {}})))
 
 
