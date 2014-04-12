@@ -2,11 +2,17 @@
   (require [ring.adapter.jetty :as jetty]
                [ring.middleware.reload :refer [wrap-reload]]
                [compojure.core :refer [defroutes GET]]
-               [compojure.route :refer [not-found]]))
+               [compojure.route :refer [not-found]]
+               [ring.handler.dump :refer [handle-dump]]))
 
 (defn greet [req]
   {:status 200
    :body "Hello, World!!!!!!!!!!!!!"
+   :headers {}})
+
+(defn about [req]
+  {:status 200
+   :body "This is the about page"
    :headers {}})
 
 (defn goodbye [req]
@@ -17,6 +23,8 @@
 
 (defroutes app
   (GET "/" [] greet)
+  (GET "/about" [] about)
+  (GET "/request" [] handle-dump)
   (GET "/goodbye" [] goodbye)
   (not-found "Page not found."))
 
