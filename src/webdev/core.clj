@@ -20,7 +20,7 @@
   (GET "/goodbye" [] goodbye)
   (not-found "Page not found."))
 
-(defn -main [& args]
+(defn -main [arg]
   (jetty/run-jetty #'app                             {:port (Integer/parseInt (System/getenv "PORT"))}))
 
 (defn -dev-main [port]
