@@ -40,6 +40,22 @@
         :value "Delete" }]]]]))
 
 
+(defn update-checked-form [id checked]
+  (html
+   [:form.form-horizontal
+    {:method "POST" :action (str "/items/" id)}
+    [:div.form-group
+     [:input {:type :hidden
+              :name "_method"
+              :value "PUT"}]
+     [:input {:type :hidden
+              :name "checked"
+              :value (str (not checked))}]
+     [:div.col-sm-offset-2.col-sm-10
+      [:input.btn.btn-primary.btn-xs
+       {:type :submit
+        :value (if checked "Done" "To-do")}]]]]))
+
 
 (defn items-page [items]
   (html5 {:lang :en}
@@ -57,12 +73,15 @@
                 [:thead
                  [:tr
                   [:th "Name"]
-                  [:th "Description"]]]
+                  [:th "Description"]
+                  [:th.col-sm-2]
+                  [:th.col-sm-2]]]
                  [:tbody
                   (for [i items]
                     [:tr
                      [:td (h (:name i))]
                      [:td (h (:description i))]
+                     [:td (update-checked-form (:id i) (:checked i))]
                      [:td (delete-item-form (:id i))]])]]
                [:div.col-sm-offset-1 "There are no items."])]
           [:div.col-sm-6
@@ -70,9 +89,6 @@
            (new-item)]]
           [:script {:src "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"}]
           [:script {:src "/bootstrap/js/bootstrap.min.js"}]]))
-
-
-
 
 
 

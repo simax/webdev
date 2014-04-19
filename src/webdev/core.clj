@@ -2,7 +2,8 @@
   (:require [webdev.item.model :as items])
   (:require [webdev.item.handler :refer [handle-index-items
                                          handle-create-item
-                                         handle-delete-item]])
+                                         handle-delete-item
+                                         handle-update-item]])
   (:require
             [ring.adapter.jetty :as jetty]
             [ring.middleware.reload :refer [wrap-reload]]
@@ -13,7 +14,9 @@
             [compojure.route :refer [not-found]]
             [ring.handler.dump :refer [handle-dump]]))
 
-(def db "jdbc:postgresql://localhost/webdev")
+(def db (or
+         (System/getenv "DATABASE_URL")
+         "jdbc:postgresql://localhost/webdev"))
 
 (defn greet [req]
   {:status 200
@@ -66,6 +69,7 @@
   (GET "/items" [] handle-index-items)
   (POST "/items" [] handle-create-item)
   (DELETE "/items/:item-id" [] handle-delete-item)
+  (PUT "/items/:item-id" [] handle-update-item)
 
   (not-found "Page not found."))
 
