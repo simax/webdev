@@ -106,10 +106,10 @@
       (wrap-params
        (wrap-simulated-methods routes)))) "static")))
 
-(defn -main [& arg]
+(defn -main [& args]
   (items/create-table db)
-  (jetty/run-jetty #'app                     {:port (Integer/parseInt (System/getenv "PORT"))}))
+  (jetty/run-jetty #'app                     {:port 8080}))
 
-(defn -dev-main [port]
+(defn -dev-main [& [port]]
   (items/create-table db)
   (jetty/run-jetty (wrap-reload #'app)       {:port (Integer. port)}))

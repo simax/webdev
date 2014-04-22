@@ -10,7 +10,10 @@
                  [org.clojure/java.jdbc "0.3.3"]
                  [postgresql/postgresql "9.1-901.jdbc4"]]
 
-  :min-lein-version "2.0.0"
+  :plugins [[lein-ring "0.8.10"]]
+
+  :ring {:handler webdev.core/-main
+         :port 8000}
 
   :uberjar-name "webdev.jar"
 
@@ -20,5 +23,3 @@
 
   :profiles {:dev
                  {:main webdev.core/-dev-main}})
-
-
