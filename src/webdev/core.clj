@@ -88,8 +88,8 @@
       (assoc-in response [:headers "Server:"] "my-server"))))
 
 
-(def sim-methods {"PUT" :put
-                  "DELETE" :delete})
+(def sim-methods {"PUT"     :put
+                  "DELETE"  :delete})
 
 (defn wrap-simulated-methods [hndlr]
   (fn [req]
@@ -106,10 +106,20 @@
       (wrap-params
        (wrap-simulated-methods routes)))) "static")))
 
-(defn -main [& args]
-  (items/create-table db)
-  (jetty/run-jetty #'app                     {:port 8080}))
+(defn -main [& [port]]
 
-(defn -dev-main [& [port]]
+  ;; passes request map when using: lein ring server (with or without port number)
+  ;; passes port number when using: len run (with port number)
+
+  (println (str "Port:" port))
   (items/create-table db)
-  (jetty/run-jetty (wrap-reload #'app)       {:port (Integer. port)}))
+  ;;(jetty/run-jetty #'app                     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
+  (jetty/run-jetty #'app                       {:port (Integer/parseInt port)}))
+  ;;(jetty/run-jetty #'app                     {:port (Integer/parseInt (:server-port options))})
+
+
+
+;;(defn -dev-main [& [req]]
+;;  (println (str "Port:" (:server-port req)))
+;;  (items/create-table db)
+;;  (jetty/run-jetty (wrap-reload #'app)       {:port (Integer. (:server-port req))}))

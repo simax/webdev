@@ -13,7 +13,7 @@
   :plugins [[lein-ring "0.8.10"]]
 
   :ring {:handler webdev.core/-main
-         :port 8000}
+         :port 8082}
 
   :uberjar-name "webdev.jar"
 
@@ -21,5 +21,5 @@
 
   :aot [webdev.core]
 
-  :profiles {:dev
-                 {:main webdev.core/-dev-main}})
+  ;;:profiles {:dev {:main webdev.core/-dev-main}}
+  )
