@@ -111,10 +111,10 @@
   ;; passes request map when using: lein ring server (with or without port number)
   ;; passes port number when using: len run (with port number)
 
-  (println (str "Port:" port))
+  ;;(println (str "Port:" port))
   (items/create-table db)
-  ;;(jetty/run-jetty #'app                     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
-  (jetty/run-jetty #'app                       {:port (Integer/parseInt port)}))
+  (jetty/run-jetty #'app     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
+  ;;(jetty/run-jetty #'app                       {:port (Integer/parseInt port)}))
   ;;(jetty/run-jetty #'app                     {:port (Integer/parseInt (:server-port options))})
 
 

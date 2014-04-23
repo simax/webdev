@@ -13,7 +13,9 @@
   :plugins [[lein-ring "0.8.10"]]
 
   :ring {:handler webdev.core/-main
-         :port 8082}
+         :port (or (Integer/parseInt (System/getenv "PORT")) 8002)}
+
+
 
   :uberjar-name "webdev.jar"
 
