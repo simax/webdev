@@ -5,18 +5,15 @@
                                          handle-delete-item
                                          handle-update-item]])
   (:require
-            [ring.adapter.jetty :as jetty]
+            [hiccup.middleware :refer [wrap-base-url]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.file-info :refer [wrap-file-info]]
             [compojure.core :refer [defroutes ANY GET POST PUT DELETE]]
             [compojure.route :refer [not-found]]
+            [compojure.handler :as handler]
             [ring.handler.dump :refer [handle-dump]]))
-
-(def db (or
-         (System/getenv "DATABASE_URL")
-         "jdbc:postgresql://localhost/webdev"))
 
 (defn greet [req]
   {:status 200
@@ -67,20 +64,28 @@
   (ANY "/request" [] handle-dump)
 
   (GET "/items" [] handle-index-items)
-  (POST "/items" [] handle-create-item)
-  (DELETE "/items/:item-id" [] handle-delete-item)
-  (PUT "/items/:item-id" [] handle-update-item)
+  (POST "/items" [& params] (handle-create-item params))
+  (DELETE "/items/:item-id" [item-id] (handle-delete-item item-id))
+  (PUT "/items/:item-id" [& params] (handle-update-item params))
 
   (not-found "Page not found."))
 
 
-(defn wrap-db [hndlr]
-  (fn [req]
-    (hndlr (assoc req :webdev/db db))))
+;;(defn wrap-servlet-path-info [handler]
+;;  (fn [request]
+;;    (if-let [servlet-req (:servlet-request request))]
+;;      (handler (assoc request :path-info (.getPathInfo servlet-req)))
+;;      (handler request))))
 
-(defn wrap-server-header [hndlr]
-  (fn [req]
-    (hndlr (assoc req :webdev/db db))))
+
+(defn wrap-check-db-exists [hndlr]
+   (items/create-table)
+   (fn [req]
+    (hndlr req)))
+
+;;(defn wrap-server-header [hndlr]
+;;  (fn [req]
+;;    (hndlr (assoc req :webdev/db db))))
 
 (defn wrap-server-response [hndlr]
   (fn [req]
@@ -98,22 +103,23 @@
       (hndlr (assoc req :request-method method))
       (hndlr req))))
 
+(def app-routes
+  (wrap-base-url
+   (wrap-check-db-exists
+    (wrap-file-info
+     (wrap-resource
+      (wrap-server-response
+       (wrap-params
+        (wrap-simulated-methods routes))) "static")))))
+
 (def app
-  (wrap-file-info
-   (wrap-resource
-    (wrap-server-response
-     (wrap-db
-      (wrap-params
-       (wrap-simulated-methods routes)))) "static")))
-
-(defn -main [& [port]]
-
   ;; passes request map when using: lein ring server (with or without port number)
   ;; passes port number when using: len run (with port number)
 
   ;;(println (str "Port:" port))
-  (items/create-table db)
-  (jetty/run-jetty #'app     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
+  ;;(items/create-table db)
+  (handler/site app-routes))
+  ;;(jetty/run-jetty #'app     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
   ;;(jetty/run-jetty #'app                       {:port (Integer/parseInt port)}))
   ;;(jetty/run-jetty #'app                     {:port (Integer/parseInt (:server-port options))})
 

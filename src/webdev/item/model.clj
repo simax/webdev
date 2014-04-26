@@ -2,13 +2,16 @@
   (:require [clojure.java.jdbc :as db]))
 
 
+(def conn (or
+         (System/getenv "DATABASE_URL")
+         "jdbc:postgresql://localhost/webdev"))
 
-(defn create-table [db]
+(defn create-table []
   (db/execute!
-   db
+   conn
    ["CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\""])
   (db/execute!
-   db
+   conn
    ["CREATE TABLE IF NOT EXISTS items
     (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
@@ -17,20 +20,19 @@
     date_created TIMESTAMPTZ NOT NULL DEFAULT now())"]))
 
 
- (defn create-item
-   [db name description]
-   (:id (first (db/query db ["INSERT INTO items (name, description) VALUES (?, ?) RETURNING id" name description]))))
+ (defn create-item [name description]
+   (:id (first (db/query conn ["INSERT INTO items (name, description) VALUES (?, ?) RETURNING id" name description]))))
 
 
- (defn update-item [db id checked]
+ (defn update-item [id checked]
    (= [1] (db/execute!
-    db
+    conn
     ["UPDATE items SET checked = ? WHERE id = ?" checked id])))
 
 
- (defn delete-item [db id]
+ (defn delete-item [id]
    (= [1]
-      (db/execute! db ["DELETE FROM items WHERE ID = ?" id])))
+      (db/execute! conn ["DELETE FROM items WHERE ID = ?" id])))
 
- (defn read-items [db]
-   (db/query db "SELECT * FROM items ORDER BY date_created"))
+ (defn read-items []
+   (db/query conn "SELECT * FROM items ORDER BY date_created"))

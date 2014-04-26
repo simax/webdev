@@ -12,16 +12,17 @@
 
   :plugins [[lein-ring "0.8.10"]]
 
-  :ring {:handler webdev.core/-main
-         :port (or (Integer/parseInt (System/getenv "PORT")) 8002)}
+  :ring {:handler webdev.core/app
+         ;;:port (or (Integer/parseInt (System/getenv "PORT")) 8080)
+         :servlet-path-info? true
+        }
 
 
+  ;:uberjar-name "webdev.jar"
 
-  :uberjar-name "webdev.jar"
+  ;:main webdev.core
 
-  :main webdev.core
-
-  :aot [webdev.core]
+  ;:aot [webdev.core]
 
   ;;:profiles {:dev {:main webdev.core/-dev-main}}
   )
