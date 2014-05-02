@@ -64,9 +64,9 @@
   (ANY "/request" [] handle-dump)
 
   (GET "/items" [] handle-index-items)
-  (POST "/items" [& params] (handle-create-item params))
-  (DELETE "/items/:item-id" [item-id] (handle-delete-item item-id))
-  (PUT "/items/:item-id" [& params] (handle-update-item params))
+  (POST "/items" [:as req] (handle-create-item req))
+  (DELETE "/items/:item-id" [item-id :as req] (handle-delete-item item-id req))
+  (PUT "/items/:item-id" [item-id checked :as req] (handle-update-item item-id checked req))
 
   (not-found "Page not found."))
 

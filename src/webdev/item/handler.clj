@@ -3,8 +3,12 @@
                                        read-items
                                        update-item
                                        delete-item]]
-            [webdev.item.view :refer [items-page]]))
+            [webdev.item.view :refer [items-page]]
+            [ring.util.response :refer [redirect]]
+            [ring.util.request :refer :all]))
 
+(defn items-list [req]
+  (str (:context req) "/items"))
 
 (defn handle-index-items [req]
   (let [items (read-items)]
@@ -13,32 +17,26 @@
      :body (items-page items)}))
 
 (defn handle-create-item [req]
-  (let [name (:name req)
-        description (:description req)
+  (let [name (get-in req [:params :name])
+        description (get-in req [:params :description])
         item-id (create-item name description)]
-    {:status 302
-     :headers {"Location" "/items"}
-     :body ""}))
+    (redirect (items-list req))))
 
-(defn handle-delete-item [item-id]
+(defn handle-delete-item [item-id req]
   (let [uuid-item-id (java.util.UUID/fromString item-id)
         exists? (delete-item uuid-item-id)]
     (if exists?
-      {:status 302
-       :headers {"Location" "/items"}
-       :body ""}
+      (redirect (items-list req))
       {:status 404
        :body "Item not found."
        :headers {}})))
 
-(defn handle-update-item [req]
-  (let [uuid-item-id (java.util.UUID/fromString (:item-id req))
-        checked (:checked req)
+(defn handle-update-item [item-id checked req]
+  (println (str "This is the context:" (:context req)))
+  (let [uuid-item-id (java.util.UUID/fromString item-id)
         exists? (update-item uuid-item-id (= "true" checked))]
     (if exists?
-      {:status 302
-       :headers {"Location" "/items"}
-       :body ""}
+      (redirect (items-list req))
       {:status 404
        :body "Item not found."
        :headers {}})))
