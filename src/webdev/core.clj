@@ -71,21 +71,11 @@
   (not-found "Page not found."))
 
 
-;;(defn wrap-servlet-path-info [handler]
-;;  (fn [request]
-;;    (if-let [servlet-req (:servlet-request request))]
-;;      (handler (assoc request :path-info (.getPathInfo servlet-req)))
-;;      (handler request))))
-
-
 (defn wrap-check-db-exists [hndlr]
    (items/create-table)
    (fn [req]
     (hndlr req)))
 
-;;(defn wrap-server-header [hndlr]
-;;  (fn [req]
-;;    (hndlr (assoc req :webdev/db db))))
 
 (defn wrap-server-response [hndlr]
   (fn [req]
@@ -113,19 +103,4 @@
         (wrap-simulated-methods routes))) "static")))))
 
 (def app
-  ;; passes request map when using: lein ring server (with or without port number)
-  ;; passes port number when using: len run (with port number)
-
-  ;;(println (str "Port:" port))
-  ;;(items/create-table db)
   (handler/site app-routes))
-  ;;(jetty/run-jetty #'app     {:port (if port (Integer/parseInt port) (Integer/parseInt (System/getenv "PORT")))}))
-  ;;(jetty/run-jetty #'app                       {:port (Integer/parseInt port)}))
-  ;;(jetty/run-jetty #'app                     {:port (Integer/parseInt (:server-port options))})
-
-
-
-;;(defn -dev-main [& [req]]
-;;  (println (str "Port:" (:server-port req)))
-;;  (items/create-table db)
-;;  (jetty/run-jetty (wrap-reload #'app)       {:port (Integer. (:server-port req))}))
