@@ -16,11 +16,9 @@
      :headers {}
      :body (items-page items)}))
 
-(defn handle-create-item [req]
-  (let [name (get-in req [:params :name])
-        description (get-in req [:params :description])
-        item-id (create-item name description)]
-    (redirect (items-list req))))
+(defn handle-create-item [name description req]
+  (create-item name description)
+  (redirect (items-list req)))
 
 (defn handle-delete-item [item-id req]
   (let [uuid-item-id (java.util.UUID/fromString item-id)

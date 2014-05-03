@@ -64,7 +64,7 @@
   (ANY "/request" [] handle-dump)
 
   (GET "/items" [] handle-index-items)
-  (POST "/items" [:as req] (handle-create-item req))
+  (POST "/items" [name description :as req] (handle-create-item name description req))
   (DELETE "/items/:item-id" [item-id :as req] (handle-delete-item item-id req))
   (PUT "/items/:item-id" [item-id checked :as req] (handle-update-item item-id checked req))
 
